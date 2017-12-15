@@ -6,18 +6,10 @@ contract File{
 
     //values functions
     function getValue(string key) public constant returns(string){
-        if(isEmpty(key) == true){
-            return "";
-        }else{
-            return hashMap[key][getValueLength(key)-1];
-        }
+        return (isEmpty(key) == true)? "" :  hashMap[key][getValueLength(key)-1];
     }
     function getAttributeValueByIndex(string key,uint index) public constant returns(string){
-        if(index >= getValueLength(key) || index < 0){
-            return "";
-        }else{
-            return hashMap[key][index];
-        }
+        return (index >= getValueLength(key) || index < 0)? "" : hashMap[key][index];
     }
     function setAttrubuteValue(string key,string memory value) public returns(uint){
         if(isEmpty(key) == true){
@@ -33,11 +25,7 @@ contract File{
         }
     }
     function isEmpty(string key) private constant returns(bool){
-        if(hashMap[key].length == 0){
-            return true;
-        }else{
-            return false;
-        }
+        return hashMap[key].length == 0;
     }
     function getValueLength(string key) public constant returns(uint){
         return hashMap[key].length;
@@ -48,10 +36,6 @@ contract File{
         return keys.length;
     }
     function getKeyByIndex(uint index) public constant returns(string){
-        if(index >= getKeyLength() || index < 0){
-            return "";
-        }else{
-            return keys[index];
-        }
+        return (index >= getKeyLength() || index < 0)? "" :  keys[index];
     }
 }
