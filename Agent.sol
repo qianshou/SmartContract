@@ -1,66 +1,33 @@
 pragma solidity ^0.4.0;
-import "./Controller.sol";
+
+import "./FacadeController.sol";
+
 contract  Agent{
-    address admin;
-    address ControllerAddr;
-    address FactoryAddr;
-    address EntityMapAddr;
-    address publicBlockMapAddr;    
-
+    address public creatorAddr;
+    address emptyAddr = 0x0000000000000000000000000000000000000000;
+    mapping(string => address) map;
     function Agent() public {
-        admin = msg.sender;
-    }
-
-    function setController(address addr) public{
-        controllerCheck();
-        ControllerAddr = addr;
-    }
-    function getController() public constant returns(address){
-        factoryCheck();
-        return ControllerAddr;
+        creatorAddr = msg.sender;
     }
     
-    function setBlockMap(address addr) public{
-        adminCheck();
-        publicBlockMapAddr = addr;
+    function setContractAddr(string _name,address _addr) public{
+        map[_name] = _addr;
     }
-    function getBlockMap() public constant returns(address){
-        adminCheck();
-        return publicBlockMapAddr;
+    function getContractAddr(string _name) public view returns(address){
+        return map[_name];
     }
     
-    function setFactory(address addr) public{
-        controllerCheck();
-        FactoryAddr = addr;
-    }
-    function getFactory() public constant returns(address){
-        controllerCheck();
-        return FactoryAddr;
-    }
-    
-    function setEntityMap(address addr) public{
-        controllerCheck();
-        address oldAddr = EntityMapAddr;
-        address newAddr = addr;
-        EntityMap map = EntityMap(newAddr);
-        map.setPreMap(oldAddr);
-    }
-    function getEntityMap() public constant returns(address){
-        controllerCheck();
-        return EntityMapAddr;
-    }
-    function initEntityMap() public{
-        if(FactoryAddr == 0x0000000000000000000000000000000000000000) return;
-        Factory factory = Factory(FactoryAddr);
-        EntityMapAddr = factory.createEntityMap();
-    }
-    function adminCheck() public constant{
-       require(admin == msg.sender);
-    }
-    function controllerCheck() public constant{
-        require(admin == msg.sender || ControllerAddr == msg.sender);
-    }
-    function factoryCheck() public constant{
-        require(admin == msg.sender || FactoryAddr == msg.sender);
+    function newEntityMap() public returns(address){
+        address facadeAddr = getContractAddr("FacadeController");
+        require(facadeAddr != emptyAddr);
+        
+        FacadeController facadeContract = FacadeController(facadeAddr);
+        address newMapAddr = facadeContract.newEntityMap();
+        address curMapAddr = getContractAddr("EntityMap");
+        EntityMap mapContract = EntityMap(newMapAddr);
+        mapContract.setPreMap(curMapAddr);
+        
+        setContractAddr("EntityMap",newMapAddr);
+        facadeContract.setMapAddr(newMapAddr);
     }
 }

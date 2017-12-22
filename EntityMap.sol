@@ -1,24 +1,18 @@
 pragma solidity ^0.4.0;
 
 contract  EntityMap{
-    address admin;
-    address controller;
-    address agentAddr;
+    address cratorAddr;
+    address controllerAddr;
     mapping(string => address) hashMap;
     string[] keys;
     address preMap;
-    event logger(string name,address addr1,address addr2,address addr3);
     
-    function EntityMap(address _admin,address _controller,address _agent) public{
-        admin = _admin;
-        controller = _controller;
-        agentAddr = _agent;
-        logger("map construct",admin,controller,agentAddr);
+    function EntityMap() public{
     }
     
-    function setController(address addr) public{
+    function setController(address _addr) public{
         authCheck();
-        controller = addr;
+        controllerAddr = _addr;
     }
     
     //values functions

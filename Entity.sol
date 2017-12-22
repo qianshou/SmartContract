@@ -1,16 +1,14 @@
 pragma solidity ^0.4.0;
 
 contract  Entity{
-    address admin;
-    address controller;
+    address creatorAddr;
+    address controllerAddr;
     string id;
     mapping(string => string[]) hashMap;
     string[] keys;
     
-    function Entity(string _id,address _admin, address _controller) public{
+    function Entity(string _id) public{
         id = _id;
-        admin = _admin;
-        controller = _controller;
     }
     
     function getId() public constant returns(string){
@@ -69,6 +67,6 @@ contract  Entity{
     }
     
     function authCheck() public constant{
-       require(admin == msg.sender || controller == msg.sender);
+       //require(admin == msg.sender || controller == msg.sender);
    }
 }
