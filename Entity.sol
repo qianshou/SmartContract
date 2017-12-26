@@ -1,19 +1,19 @@
 pragma solidity ^0.4.0;
 
 contract  Entity{
-    address creatorAddr;
-    address controllerAddr;
     string id;
     mapping(string => string[]) hashMap;
     string[] keys;
+    address[] public authList;
     
-    function Entity(string _id) public{
+    function Entity(string _id,address _web3Addr,address _controllerAddr) public{
         id = _id;
+        authList.push(_controllerAddr);
+        authList.push(_web3Addr);
     }
     
     function getId() public constant returns(string){
         authCheck();
-        
         return id;
     }
 
@@ -66,7 +66,15 @@ contract  Entity{
         return (index >= getKeyLength() || index < 0)? "" :  keys[index];
     }
     
-    function authCheck() public constant{
-       //require(admin == msg.sender || controller == msg.sender);
+    function authCheck() private view {
+        require(authListCheck()==true);
+    }
+    
+    function authListCheck() constant private returns(bool){
+       address vistor = msg.sender;
+       for(uint i=0;i<authList.length;i++){
+           if(authList[i] == vistor) return true;
+       }
+       return false;
    }
 }

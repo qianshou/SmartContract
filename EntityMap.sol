@@ -1,22 +1,18 @@
 pragma solidity ^0.4.0;
 
 contract  EntityMap{
-    address cratorAddr;
-    address controllerAddr;
     mapping(string => address) hashMap;
     string[] keys;
     address preMap;
+    address[] public authList;
     
-    function EntityMap() public{
-    }
-    
-    function setController(address _addr) public{
-        authCheck();
-        controllerAddr = _addr;
+    function EntityMap(address _web3Addr,address _controllerAddr) public{
+        authList.push(_controllerAddr);
+        authList.push(_web3Addr);
     }
     
     //values functions
-    function getValue(string key) public constant returns(address){
+    function getValue(string key) public view returns(address){
         authCheck();
         return hashMap[key];
     }
@@ -28,11 +24,11 @@ contract  EntityMap{
     }
 
     //keys functions
-    function getKeyLength() public constant returns(uint){
+    function getKeyLength() public view returns(uint){
         authCheck();
         return keys.length;
     }
-    function getKeyByIndex(uint index) public constant returns(string){
+    function getKeyByIndex(uint index) public view returns(string){
         authCheck();
         return (index >= getKeyLength() || index < 0)? "" :  keys[index];
     }
@@ -42,12 +38,20 @@ contract  EntityMap{
         authCheck();
         preMap = addr;
     }
-    function getPreMap() public constant returns(address){
+    function getPreMap() public view returns(address){
         authCheck();
         return preMap;
     }
     
-    function authCheck() public constant{
-       //require(admin == msg.sender || controller == msg.sender || agentAddr == msg.sender);
+    function authCheck() private view {
+        require(authListCheck()==true);
+    }
+    
+    function authListCheck() constant private returns(bool){
+       address vistor = msg.sender;
+       for(uint i=0;i<authList.length;i++){
+           if(authList[i] == vistor) return true;
+       }
+       return false;
    }
 }
